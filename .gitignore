@@ -1,0 +1,94 @@
+# ─── AI tooling (Claude Code, agents, generated plans) ──────────────────────
+.claude/
+CLAUDE.md
+specs/
+.cursor/
+.cursorrules
+.aider*
+.github/copilot-instructions.md
+
+# ─── OS artifacts ────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ─── IDE ─────────────────────────────────────────────────────────────────────
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# ─── Angular / Node (secure-key-vault-fe) ────────────────────────────────────
+**/node_modules/
+**/dist/
+**/.angular/cache/
+**/out-tsc/
+**/coverage/
+npm-debug.log*
+yarn-error.log*
+.sass-cache/
+testem.log
+__screenshots__/
+
+# ─── .NET / ASP.NET Core (secure-key-vault-api & indentity-provider) ─────────
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+bld/
+**/bin/
+**/obj/
+.vs/
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.VisualState.xml
+TestResult.xml
+*.log
+*.tmp
+*.tmp_proj
+*.pidb
+*.suo
+*.cache
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+publish/
+*.[Pp]ublish.xml
+*.azurePubxml
+*.pubxml
+*.publishproj
+**/packages/*
+!**/packages/build/
+FakesAssemblies/
+
+# ─── SQLite databases ────────────────────────────────────────────────────────
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# ─── Secrets & credentials ───────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.pem
+*.key
+appsettings.Local.json
+appsettings.Development.json
+
+# ─── Docker ──────────────────────────────────────────────────────────────────
+docker/.env
+docker/**/.env

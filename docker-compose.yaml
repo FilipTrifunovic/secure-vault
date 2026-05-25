@@ -1,0 +1,52 @@
+services:
+  frontend:
+    build: ./secure-key-vault-fe
+    container_name: secureshare-frontend
+    ports:
+      - "4200:8080"
+    volumes:
+      - ./docker/env.js:/usr/share/nginx/html/env.js:ro
+    depends_on: [api, identity]
+    networks:
+      - secureshare
+
+  api:
+    build: ./secure-key-vault-api
+    container_name: secureshare-api
+    ports:
+      - "5002:8080"
+    environment:
+      Auth__Authority: "http://identity:8080"
+      Auth__RequireHttpsMetadata: "false"
+      Auth__ExternalIssuer: "http://localhost:5001"
+      Cors__AllowedOrigins__0: "http://localhost:4200"
+      ConnectionStrings__DefaultConnection: "Data Source=/app/data/securevault.db"
+    volumes:
+      - api-data:/app/data
+    depends_on: [identity]
+    networks:
+      - secureshare
+
+  identity:
+    build: ./indentity-provider
+    container_name: secureshare-identity
+    ports:
+      - "5001:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      FrontendUrl: "http://localhost:4200"
+      IssuerUri: "http://localhost:5001"
+      ConnectionStrings__DefaultConnection: "Data Source=/app/data/Duende.IdentityServer.EntityFramework.db"
+      ConnectionStrings__IdentityDefaultConnection: "Data Source=/app/data/Duende.Identity.EntityFramework.db"
+    volumes:
+      - identity-data:/app/data
+    networks:
+      - secureshare
+
+volumes:
+  identity-data:
+  api-data:
+
+networks:
+  secureshare:
+    driver: bridge
