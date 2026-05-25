@@ -92,3 +92,6 @@ appsettings.Development.json
 # ─── Docker ──────────────────────────────────────────────────────────────────
 docker/.env
 docker/**/.env
+
+# IdentityServer signing keys (ne commitovati)
+**/keys/
