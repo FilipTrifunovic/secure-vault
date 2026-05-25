@@ -1,0 +1,155 @@
+<div
+  class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[60]"
+  (click)="onBackdropClick($event)"
+>
+  <div class="bg-slate-800 border border-white/10 rounded-xl w-full max-w-lg mx-4 overflow-hidden">
+    <div class="px-4 py-3 border-b border-white/10 flex items-center justify-between">
+      <h3 class="text-white font-medium">Import Vault</h3>
+      <button
+        (click)="close.emit()"
+        class="p-1 text-slate-400 hover:text-white rounded transition-colors cursor-pointer"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="p-4 space-y-4">
+      @if (step() === 'select') {
+        <div class="text-sm text-slate-300 space-y-2">
+          <p>Supported formats:</p>
+          <ul class="list-disc list-inside text-slate-400 text-xs space-y-1">
+            <li>SecureVault backup (.json, .enc)</li>
+            <li>Bitwarden export (.csv)</li>
+            <li>LastPass export (.csv)</li>
+          </ul>
+        </div>
+
+        <label class="flex flex-col items-center justify-center p-8 border-2 border-dashed border-white/20 rounded-lg hover:border-indigo-500/50 hover:bg-white/5 transition-colors cursor-pointer">
+          <svg class="w-10 h-10 text-slate-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+          </svg>
+          <p class="text-white text-sm mb-1">Click to select file</p>
+          <p class="text-slate-400 text-xs">.csv, .json, or .enc</p>
+          <input
+            type="file"
+            accept=".csv,.json,.enc"
+            (change)="onFileSelect($event)"
+            class="hidden"
+          />
+        </label>
+
+        @if (error()) {
+          <p class="text-red-400 text-sm">{{ error() }}</p>
+        }
+      }
+
+      @if (step() === 'preview') {
+        @if (importResult(); as result) {
+          <div class="flex items-center gap-2 text-sm">
+            <span class="text-slate-400">Format:</span>
+            <span class="text-white font-medium">{{ formatLabels[result.format] }}</span>
+          </div>
+
+          <div class="text-sm text-slate-300">
+            Found {{ result.entries.length }} entries
+            @if (result.folders.length > 0) {
+              and {{ result.folders.length }} folders
+            }
+          </div>
+
+          <div class="max-h-48 overflow-y-auto bg-white/5 rounded-lg divide-y divide-white/5">
+            @for (entry of result.entries.slice(0, 50); track $index) {
+              <div class="px-3 py-2 flex items-center gap-3">
+                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getEntryIcon(entry.entryType)" />
+                </svg>
+                <div class="min-w-0 flex-1">
+                  <p class="text-white text-sm truncate">{{ getTitle(entry) }}</p>
+                </div>
+              </div>
+            }
+            @if (result.entries.length > 50) {
+              <div class="px-3 py-2 text-center text-slate-400 text-xs">
+                +{{ result.entries.length - 50 }} more entries
+              </div>
+            }
+          </div>
+
+          <div class="space-y-2">
+            <label class="flex items-center gap-2 text-sm cursor-pointer">
+              <input
+                type="checkbox"
+                [checked]="createFolders()"
+                (change)="createFolders.set(!createFolders())"
+                class="accent-indigo-500"
+              />
+              <span class="text-slate-300">Create folders automatically</span>
+            </label>
+            <label class="flex items-center gap-2 text-sm cursor-pointer">
+              <input
+                type="checkbox"
+                [checked]="skipDuplicates()"
+                (change)="skipDuplicates.set(!skipDuplicates())"
+                class="accent-indigo-500"
+              />
+              <span class="text-slate-300">Skip duplicates (same URL + username)</span>
+            </label>
+          </div>
+
+          @if (error()) {
+            <p class="text-red-400 text-sm">{{ error() }}</p>
+          }
+
+          <div class="flex gap-3">
+            <button
+              (click)="step.set('select'); importResult.set(null)"
+              class="flex-1 px-4 py-2 text-slate-300 hover:text-white border border-white/10 hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
+            >
+              Back
+            </button>
+            <button
+              (click)="import()"
+              class="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors cursor-pointer"
+            >
+              Import {{ result.entries.length }} entries
+            </button>
+          </div>
+        }
+      }
+
+      @if (step() === 'importing') {
+        <div class="text-center py-4">
+          <div class="w-12 h-12 rounded-full bg-indigo-500/20 flex items-center justify-center mx-auto mb-3">
+            <div class="w-6 h-6 border-2 border-indigo-400/30 border-t-indigo-400 rounded-full animate-spin"></div>
+          </div>
+          <p class="text-white mb-2">Importing entries...</p>
+          <div class="w-full bg-white/10 rounded-full h-2 mb-2">
+            <div [class]="'bg-indigo-500 h-2 rounded-full transition-all duration-300 ' + getProgressWidthClass()"></div>
+          </div>
+          <p class="text-slate-400 text-sm">{{ importedCount() }} imported, {{ skippedCount() }} skipped</p>
+        </div>
+      }
+
+      @if (step() === 'done') {
+        <div class="text-center py-4">
+          <div class="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-3">
+            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <p class="text-white mb-1">Import complete!</p>
+          <p class="text-slate-400 text-sm">{{ importedCount() }} entries imported, {{ skippedCount() }} skipped</p>
+        </div>
+
+        <button
+          (click)="close.emit()"
+          class="w-full px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors cursor-pointer"
+        >
+          Done
+        </button>
+      }
+    </div>
+  </div>
+</div>

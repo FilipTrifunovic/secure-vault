@@ -1,0 +1,79 @@
+<app-animated-background />
+
+<div class="min-h-screen flex items-center justify-center px-4 relative">
+  <div class="w-full max-w-md animate-fade-in-up">
+    <div class="backdrop-blur-xl bg-white/[0.03] border border-white/10 rounded-3xl p-8 shadow-2xl shadow-black/20 relative overflow-hidden group">
+      <!-- Card glow effect -->
+      <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+      <!-- Shield Icon with pulse -->
+      <div class="flex justify-center mb-6 relative">
+        <div class="absolute inset-0 flex items-center justify-center">
+          <div class="w-20 h-20 bg-indigo-500/20 rounded-full blur-xl animate-pulse"></div>
+        </div>
+        <div class="relative p-4 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-400/20 shadow-lg shadow-indigo-500/10">
+          <svg
+            class="w-10 h-10 text-indigo-400"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"
+            />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Heading -->
+      <h1 class="text-3xl font-bold text-center text-white mb-2 tracking-tight">SecureVault</h1>
+      <p class="text-center text-slate-400 text-sm mb-8 max-w-xs mx-auto leading-relaxed">
+        Zero-knowledge password vault. Your master password never leaves your device.
+      </p>
+
+      <!-- Security badges -->
+      <div class="flex items-center justify-center gap-4 mb-8">
+        <div class="flex items-center gap-1.5 text-xs text-slate-500">
+          <svg class="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+          </svg>
+          AES-256
+        </div>
+        <div class="w-px h-3 bg-white/10"></div>
+        <div class="flex items-center gap-1.5 text-xs text-slate-500">
+          <svg class="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+          </svg>
+          PBKDF2
+        </div>
+        <div class="w-px h-3 bg-white/10"></div>
+        <div class="flex items-center gap-1.5 text-xs text-slate-500">
+          <svg class="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+          </svg>
+          E2E
+        </div>
+      </div>
+
+      <!-- Sign In Button -->
+      <button
+        (click)="signIn()"
+        class="w-full py-3.5 px-4 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 transition-all duration-300 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98] cursor-pointer relative overflow-hidden group/btn"
+      >
+        <span class="relative z-10">Sign In</span>
+        <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700"></div>
+      </button>
+    </div>
+
+    <!-- Footer -->
+    <p class="text-center text-slate-600 text-xs mt-8 flex items-center justify-center gap-2">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+      </svg>
+      Protected by zero-knowledge encryption
+    </p>
+  </div>
+</div>

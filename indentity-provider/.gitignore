@@ -1,0 +1,44 @@
+# Build output
+[Dd]ebug/
+[Rr]elease/
+**/bin/
+**/obj/
+
+# IDE
+.vs/
+.idea/
+*.suo
+*.user
+*.userprefs
+*.DotSettings.user
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+# Test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+TestResult.xml
+
+# NuGet
+**/packages/*
+!**/packages/build/
+*.nupkg
+
+# Secrets & certs
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.pem
+*.key
+appsettings.Local.json
+appsettings.Development.json
+
+# Logs & temp
+*.log
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db

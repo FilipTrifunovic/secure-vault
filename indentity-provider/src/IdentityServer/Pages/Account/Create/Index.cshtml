@@ -1,0 +1,93 @@
+@page
+@model identityserver.Pages.Create.Index
+@{ ViewData["BodyClass"] = "vault-auth-page"; }
+
+<div class="vault-card">
+
+    <!-- Shield icon -->
+    <div class="vault-icon-wrap">
+        <div class="vault-icon-inner">
+            <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+            </svg>
+        </div>
+    </div>
+
+    <h1 class="vault-title">Create Account</h1>
+    <p class="vault-subtitle">Join SecureVault</p>
+
+    <!-- Security badges -->
+    <div class="vault-badges">
+        <span class="vault-badge">
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+            </svg>
+            AES-256
+        </span>
+        <span class="vault-badge-sep"></span>
+        <span class="vault-badge">
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+            </svg>
+            PBKDF2
+        </span>
+        <span class="vault-badge-sep"></span>
+        <span class="vault-badge">
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+            </svg>
+            E2E
+        </span>
+    </div>
+
+    @{
+        var hasErrors = !ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0;
+    }
+    @if (hasErrors)
+    {
+        <div class="vault-error">
+            <partial name="_ValidationSummary" />
+        </div>
+    }
+
+    <form asp-page="/Account/Create/Index">
+        <input type="hidden" asp-for="Input.ReturnUrl" />
+
+        <div class="vault-field">
+            <label class="vault-label" asp-for="Input.Username">Username</label>
+            <input class="vault-input" placeholder="Choose a username" asp-for="Input.Username" autofocus autocomplete="username" />
+        </div>
+
+        <div class="vault-field">
+            <label class="vault-label" asp-for="Input.Email">Email</label>
+            <input class="vault-input" type="email" placeholder="your@email.com" asp-for="Input.Email" autocomplete="email" />
+        </div>
+
+        <div class="vault-field">
+            <label class="vault-label" asp-for="Input.Password">Password</label>
+            <input class="vault-input" type="password" placeholder="Create a password" asp-for="Input.Password" autocomplete="new-password" />
+        </div>
+
+        <div class="vault-field">
+            <label class="vault-label" asp-for="Input.ConfirmPassword">Confirm Password</label>
+            <input class="vault-input" type="password" placeholder="Repeat your password" asp-for="Input.ConfirmPassword" autocomplete="new-password" />
+        </div>
+
+        <button class="vault-btn-primary" name="Input.Button" value="create">Create Account</button>
+        <button class="vault-btn-secondary" name="Input.Button" value="cancel">Cancel</button>
+    </form>
+
+    <div class="vault-divider"></div>
+    <p style="text-align:center;color:#94a3b8;font-size:0.875rem;">
+        Already have an account?
+        <a class="vault-link" asp-page="/Account/Login/Index" asp-route-returnUrl="@Model.Input.ReturnUrl">Sign In</a>
+    </p>
+
+    <div class="vault-footer">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+        Protected by zero-knowledge encryption
+    </div>
+</div>

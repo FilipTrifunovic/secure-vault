@@ -1,0 +1,17 @@
+@if (auth.isAuthenticated()) {
+  <nav class="h-16 flex items-center justify-between px-6 bg-slate-900 border-b border-white/10">
+    <span class="text-lg font-bold text-white tracking-tight">SecureVault</span>
+    <div class="flex items-center gap-4">
+      <span class="text-sm text-slate-400">{{ auth.username() }}</span>
+      <button
+        (click)="auth.signOut()"
+        class="text-sm text-slate-400 hover:text-white border border-white/10 rounded-lg px-3 py-1.5 hover:bg-white/5 transition-colors cursor-pointer"
+      >
+        Sign Out
+      </button>
+    </div>
+  </nav>
+}
+
+<router-outlet />
+<app-toast-outlet />

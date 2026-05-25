@@ -1,0 +1,14 @@
+version: '3'
+services:
+  secure-key-vault-api:
+    container_name: secure-key-vault-api
+    build: .
+    ports:
+      - 5000:80
+      - 5001:5001
+    networks:
+      - securevault
+
+networks:
+  securevault:
+    driver: bridge

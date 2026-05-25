@@ -1,0 +1,96 @@
+<div
+  class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[60]"
+  (click)="onBackdropClick($event)"
+>
+  <div class="bg-slate-800 border border-white/10 rounded-xl w-full max-w-md mx-4 overflow-hidden">
+    <div class="px-4 py-3 border-b border-white/10 flex items-center justify-between">
+      <h3 class="text-white font-medium">Export Vault</h3>
+      <button
+        (click)="close.emit()"
+        class="p-1 text-slate-400 hover:text-white rounded transition-colors cursor-pointer"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="p-4 space-y-4">
+      @if (success()) {
+        <div class="text-center py-4">
+          <div class="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-3">
+            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <p class="text-white">Export complete!</p>
+        </div>
+      } @else {
+        <div class="text-sm text-slate-300">
+          <p>Export {{ entryCount() }} entries and {{ folderCount() }} folders.</p>
+        </div>
+
+        <div class="space-y-2">
+          <label class="flex items-start gap-3 p-3 bg-white/5 border border-white/10 rounded-lg cursor-pointer hover:bg-white/10 transition-colors">
+            <input
+              type="radio"
+              name="format"
+              value="encrypted"
+              [checked]="exportFormat() === 'encrypted'"
+              (change)="exportFormat.set('encrypted')"
+              class="mt-1 accent-indigo-500"
+            />
+            <div>
+              <p class="text-white font-medium">Encrypted (Recommended)</p>
+              <p class="text-slate-400 text-xs">AES-256 encrypted with your vault key. Can only be imported with your master password.</p>
+            </div>
+          </label>
+
+          <label class="flex items-start gap-3 p-3 bg-white/5 border border-white/10 rounded-lg cursor-pointer hover:bg-white/10 transition-colors">
+            <input
+              type="radio"
+              name="format"
+              value="json"
+              [checked]="exportFormat() === 'json'"
+              (change)="exportFormat.set('json')"
+              class="mt-1 accent-indigo-500"
+            />
+            <div>
+              <p class="text-white font-medium">JSON (Plaintext)</p>
+              <p class="text-slate-400 text-xs">Unencrypted JSON file. Anyone with access can read your passwords.</p>
+            </div>
+          </label>
+        </div>
+
+        @if (exportFormat() === 'json') {
+          <div class="flex items-start gap-2 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+            <svg class="w-5 h-5 text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <p class="text-amber-200 text-sm">Warning: This file will contain all your passwords in plain text. Store it securely and delete after use.</p>
+          </div>
+        }
+
+        @if (error()) {
+          <p class="text-red-400 text-sm">{{ error() }}</p>
+        }
+
+        <button
+          (click)="export()"
+          [disabled]="exporting()"
+          class="w-full px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-600 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer"
+        >
+          @if (exporting()) {
+            <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+            <span>Exporting...</span>
+          } @else {
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span>Download Backup</span>
+          }
+        </button>
+      }
+    </div>
+  </div>
+</div>

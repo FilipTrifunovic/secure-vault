@@ -1,0 +1,26 @@
+<div class="fixed top-4 right-4 z-[200] flex flex-col gap-2 pointer-events-none">
+  @for (item of toast.toasts(); track item.id) {
+    <div
+      class="pointer-events-auto flex items-start gap-3 px-4 py-3 rounded-xl border shadow-xl backdrop-blur-xl text-sm font-medium animate-fade-in max-w-sm"
+      [class.bg-emerald-500/20]="item.type === 'success'"
+      [class.border-emerald-500/30]="item.type === 'success'"
+      [class.text-emerald-300]="item.type === 'success'"
+      [class.bg-red-500/20]="item.type === 'error'"
+      [class.border-red-500/30]="item.type === 'error'"
+      [class.text-red-300]="item.type === 'error'"
+      [class.bg-indigo-500/20]="item.type === 'info'"
+      [class.border-indigo-500/30]="item.type === 'info'"
+      [class.text-indigo-300]="item.type === 'info'"
+    >
+      <span class="flex-1">{{ item.message }}</span>
+      <button
+        (click)="toast.dismiss(item.id)"
+        class="opacity-60 hover:opacity-100 transition-opacity cursor-pointer flex-shrink-0"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  }
+</div>

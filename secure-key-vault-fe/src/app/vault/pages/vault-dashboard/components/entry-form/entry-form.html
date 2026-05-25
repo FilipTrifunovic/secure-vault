@@ -1,0 +1,214 @@
+<div
+  class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
+  (click)="onBackdropClick($event)"
+>
+  <div class="bg-slate-800 border border-white/10 rounded-xl w-full max-w-lg mx-4 overflow-hidden max-h-[90vh] overflow-y-auto">
+    <div class="px-4 py-3 border-b border-white/10 flex items-center justify-between sticky top-0 bg-slate-800 z-10">
+      <h3 class="text-white font-medium">{{ editing() ? 'Edit Entry' : 'New Entry' }}</h3>
+      <button (click)="close()" class="p-1 text-slate-400 hover:text-white rounded transition-colors cursor-pointer">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="p-4 space-y-4">
+      @if (!editing()) {
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">Type</label>
+          <select
+            [value]="entryType()"
+            (change)="entryType.set(+$any($event.target).value)"
+            class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            <option [value]="EntryType.Login" class="bg-slate-800">Login</option>
+            <option [value]="EntryType.SecureNote" class="bg-slate-800">Secure Note</option>
+            <option [value]="EntryType.CreditCard" class="bg-slate-800">Credit Card</option>
+            <option [value]="EntryType.Identity" class="bg-slate-800">Identity</option>
+          </select>
+        </div>
+      }
+
+      @if (folders().length > 0) {
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">Folder (optional)</label>
+          <select
+            [value]="selectedFolderId() || ''"
+            (change)="selectedFolderId.set($any($event.target).value || undefined)"
+            class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            <option value="" class="bg-slate-800">No folder</option>
+            @for (folder of folders(); track folder.id) {
+              <option [value]="folder.id" class="bg-slate-800">{{ folder.name }}</option>
+            }
+          </select>
+        </div>
+      }
+
+      @switch (entryType()) {
+        @case (EntryType.Login) {
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">URL</label>
+            <input type="url" [value]="url()" (input)="url.set($any($event.target).value)" placeholder="https://example.com"
+              class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          </div>
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Username</label>
+            <input type="text" [value]="username()" (input)="username.set($any($event.target).value)" placeholder="username"
+              class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          </div>
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Password</label>
+            <div class="flex gap-2">
+              <input type="text" [value]="password()" (input)="password.set($any($event.target).value)" placeholder="password"
+                class="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono" />
+              <button (click)="generatePassword()"
+                class="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm rounded-lg transition-colors whitespace-nowrap cursor-pointer">
+                Generate
+              </button>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Notes</label>
+            <textarea [value]="notes()" (input)="notes.set($any($event.target).value)" rows="2" placeholder="Optional notes"
+              class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
+          </div>
+        }
+        @case (EntryType.SecureNote) {
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Title</label>
+            <input type="text" [value]="noteTitle()" (input)="noteTitle.set($any($event.target).value)" placeholder="Note title"
+              class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          </div>
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Content</label>
+            <textarea [value]="noteContent()" (input)="noteContent.set($any($event.target).value)" rows="6" placeholder="Secure note content"
+              class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
+          </div>
+        }
+        @case (EntryType.CreditCard) {
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Cardholder Name</label>
+            <input type="text" [value]="cardholderName()" (input)="cardholderName.set($any($event.target).value)" placeholder="John Doe"
+              class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          </div>
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Card Number</label>
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="16"
+              [value]="cardNumber()"
+              (beforeinput)="onDigitBeforeInput($event)"
+              (input)="cardNumber.set($any($event.target).value)"
+              (blur)="onCardNumberBlur()"
+              placeholder="4111111111111111"
+              class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono"
+              [class.!border-red-500]="cardNumberError()" />
+            @if (cardNumberError()) {
+              <p class="text-red-400 text-xs mt-1">{{ cardNumberError() }}</p>
+            }
+          </div>
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="block text-sm text-slate-300 mb-1">Month</label>
+              <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2"
+                [value]="expMonth()"
+                (beforeinput)="onDigitBeforeInput($event)"
+                (input)="expMonth.set($any($event.target).value)"
+                (blur)="onExpMonthBlur()"
+                placeholder="MM"
+                class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                [class.!border-red-500]="expMonthError()" />
+              @if (expMonthError()) {
+                <p class="text-red-400 text-xs mt-1">{{ expMonthError() }}</p>
+              }
+            </div>
+            <div>
+              <label class="block text-sm text-slate-300 mb-1">Year</label>
+              <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2"
+                [value]="expYear()"
+                (beforeinput)="onDigitBeforeInput($event)"
+                (input)="expYear.set($any($event.target).value)"
+                (blur)="onExpYearBlur()"
+                placeholder="YY"
+                class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                [class.!border-red-500]="expYearError()" />
+              @if (expYearError()) {
+                <p class="text-red-400 text-xs mt-1">{{ expYearError() }}</p>
+              }
+            </div>
+            <div>
+              <label class="block text-sm text-slate-300 mb-1">CVV</label>
+              <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3"
+                [value]="cvv()"
+                (beforeinput)="onDigitBeforeInput($event)"
+                (input)="cvv.set($any($event.target).value)"
+                (blur)="onCvvBlur()"
+                placeholder="123"
+                class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono"
+                [class.!border-red-500]="cvvError()" />
+              @if (cvvError()) {
+                <p class="text-red-400 text-xs mt-1">{{ cvvError() }}</p>
+              }
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Notes</label>
+            <textarea [value]="cardNotes()" (input)="cardNotes.set($any($event.target).value)" rows="2" placeholder="Optional notes"
+              class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
+          </div>
+        }
+        @case (EntryType.Identity) {
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-sm text-slate-300 mb-1">First Name</label>
+              <input type="text" [value]="firstName()" (input)="firstName.set($any($event.target).value)"
+                class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+            <div>
+              <label class="block text-sm text-slate-300 mb-1">Last Name</label>
+              <input type="text" [value]="lastName()" (input)="lastName.set($any($event.target).value)"
+                class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Email</label>
+            <input type="email" [value]="email()"
+              (input)="email.set($any($event.target).value)"
+              (blur)="onEmailBlur()"
+              class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              [class.!border-red-500]="emailError()" />
+            @if (emailError()) {
+              <p class="text-red-400 text-xs mt-1">{{ emailError() }}</p>
+            }
+          </div>
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Phone</label>
+            <input type="tel" [value]="phone()" (input)="phone.set($any($event.target).value)"
+              class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          </div>
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Address</label>
+            <textarea [value]="address()" (input)="address.set($any($event.target).value)" rows="2"
+              class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
+          </div>
+        }
+      }
+
+      @if (error()) {
+        <p class="text-red-400 text-sm">{{ error() }}</p>
+      }
+
+      <button
+        (click)="save()"
+        [disabled]="saving()"
+        class="w-full px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-600 text-white rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
+      >
+        @if (saving()) {
+          <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+          <span>Saving...</span>
+        } @else {
+          <span>{{ editing() ? 'Update' : 'Save' }}</span>
+        }
+      </button>
+    </div>
+  </div>
+</div>
